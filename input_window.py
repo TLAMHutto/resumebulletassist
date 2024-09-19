@@ -1,8 +1,9 @@
 import tkinter as tk
-from tkinter import filedialog, Text
+from tkinter import filedialog, Text, ttk
 import subprocess
 import os
 import tempfile
+import ollama
 
 class TextProcessorWindow:
     def __init__(self, root):
@@ -48,32 +49,75 @@ class TextProcessorWindow:
         clear_button = tk.Button(root, text="Clear", command=self.clear_text)
         clear_button.grid(row=3, column=0, columnspan=2, pady=10, sticky="ew")
 
-    # Function to add placeholder functionality to Text widget
+        # Bind the Enter key to send_message function for job_desc_text
+        self.job_desc_text.bind("<Return>", self.on_enter_pressed)
+
+        # Add a dropdown for model selection
+        self.model_var = tk.StringVar(root)
+        self.model_dropdown = ttk.Combobox(root, textvariable=self.model_var, state="readonly")
+        self.model_dropdown.grid(row=4, column=0, columnspan=2, pady=10, sticky="ew")
+        self.update_model_list()
+
+        # Refresh models button
+        refresh_button = tk.Button(root, text="Refresh Models", command=self.update_model_list)
+        refresh_button.grid(row=5, column=0, columnspan=2, pady=10, sticky="ew")
+
     def add_placeholder(self, text_widget, placeholder_text):
-        # Insert placeholder text
         text_widget.insert(1.0, placeholder_text)
         text_widget.config(fg="grey")
-
-        # Bind focus-in event to remove placeholder
         text_widget.bind("<FocusIn>", lambda event: self.on_focus_in(event, placeholder_text))
-
-        # Bind focus-out event to add placeholder back if empty
         text_widget.bind("<FocusOut>", lambda event: self.on_focus_out(event, placeholder_text))
 
-    # Focus-in event handler to clear placeholder
     def on_focus_in(self, event, placeholder_text):
         text_widget = event.widget
         if text_widget.get(1.0, tk.END).strip() == placeholder_text:
             text_widget.delete(1.0, tk.END)
             text_widget.config(fg="black")
 
-    # Focus-out event handler to add placeholder if the box is empty
     def on_focus_out(self, event, placeholder_text):
         text_widget = event.widget
         if not text_widget.get(1.0, tk.END).strip():
             text_widget.insert(1.0, placeholder_text)
             text_widget.config(fg="grey")
 
+    def update_model_list(self):
+        try:
+            models = ollama.list()
+            model_names = [model['name'] for model in models['models']]
+            self.model_dropdown['values'] = model_names
+            if model_names:
+                self.model_var.set(model_names[0])
+        except Exception as e:
+            print(f"Error fetching models: {str(e)}")
+            self.model_dropdown['values'] = ["Error fetching models"]
+            self.model_var.set("Error fetching models")
+
+    def send_message(self):
+        job_desc = self.job_desc_text.get("1.0", "end-1c").strip()
+        
+        if job_desc and job_desc != self.job_desc_pd:
+            model = self.model_var.get()
+
+            try:
+                response = ollama.chat(model=model, messages=[
+                    {
+                        'role': 'user',
+                        'content': job_desc,
+                    },
+                ])
+
+                ai_message = response['message']['content']
+                self.ai_desc_text.delete(1.0, tk.END)
+                self.ai_desc_text.insert(tk.END, ai_message)
+            except Exception as e:
+                self.ai_desc_text.delete(1.0, tk.END)
+                self.ai_desc_text.insert(tk.END, f"Error: Failed to get response from {model}. {str(e)}")
+
+    def on_enter_pressed(self, event):
+        self.send_message()
+        return 'break'
+        
+        
     # Function to upload a file
     def upload_file(self):
         # Open a file dialog to select a file
