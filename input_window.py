@@ -97,12 +97,22 @@ class TextProcessorWindow:
         
         if job_desc and job_desc != self.job_desc_pd:
             model = self.model_var.get()
+            prompt = """Based on the following job description, generate 5-7 concise, impactful bullet points that I can use in my resume. Each bullet point should:
+1. Start with a strong action verb
+2. Highlight a relevant skill or achievement
+3. Be tailored to the job requirements
+4. Be quantifiable where possible
+5. Be no longer than one line each
+
+Here's the job description:
+
+""" + job_desc
 
             try:
                 response = ollama.chat(model=model, messages=[
                     {
                         'role': 'user',
-                        'content': job_desc,
+                        'content': prompt,
                     },
                 ])
 
