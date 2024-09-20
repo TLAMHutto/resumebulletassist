@@ -19,31 +19,32 @@
   Parsons Corp.
   | 2022-2024
   
--
+- 
 
--
+- 
 
--
+- 
 
 **Software Engineer**
   CCI
   | 2020-2022
 
--
+- 
 
--
+- 
 
--
+- 
 
 **Software Engineer**
   Norris Cylinder
   | 2018-2020
 
--
+- 
 
--
+- 
 
--
+- 
+
 
 **Tomahawk Missile Technician**
   U.S. Navy
@@ -59,6 +60,7 @@ Python desktop chat app to allow users to interact with local AI models locally 
 A full stack job MERN job tracking app that allows users to sign up and add, store, and track job applications and interviews. Desktop version allows same functionalities with added perks such as job scrapping, resume building and local storage. Frontend built with React. Backend built with Express and MongoDB. Deployed on Heroku Desktop version built with React, Electron.js, mySQL and Python  
 [OCR Stream](https://github.com/TLAMHutto/P2P-LAN)  
 This project provides a simple Python-based application for streaming video from one computer to another over a Local Area Network. In addition to streaming, it includes a draggable screenshot tool that allows users to capture images from the client's screen, with the ability to convert these images to text using Optical Character Recognition.
+
 
 
 
