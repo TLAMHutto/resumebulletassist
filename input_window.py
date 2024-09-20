@@ -160,33 +160,33 @@ class TextProcessorWindow:
     def send_message(self):
         job_desc = self.job_desc_text.get("1.0", "end-1c").strip()
         
-        if job_desc and job_desc != self.job_desc_pd:
-            model = self.model_var.get()
-            prompt = """Based on the following job description, generate 10 concise, impactful bullet points that I can use in my resume. Each bullet point should:
-            1. Start with a strong action verb
-            2. Highlight a relevant skill or achievement
-            3. Be tailored to the job requirements
-            4. Be quantifiable where possible
-            5. Be no longer than one line each
 
-            Here's the job description:
+        model = self.model_var.get()
+        prompt = """Based on the following job description, generate 10 concise, impactful bullet points that I can use in my resume. Each bullet point should:
+        1. Start with a strong action verb
+        2. Highlight a relevant skill or achievement
+        3. Be tailored to the job requirements
+        4. Be quantifiable where possible
+        5. Be no longer than one line each
 
-            """ + job_desc
+        Here's the job description:
 
-            try:
-                response = ollama.chat(model=model, messages=[
-                    {
-                        'role': 'user',
-                        'content': prompt,
-                    },
-                ])
+        """ + job_desc
 
-                ai_message = response['message']['content']
-                self.ai_desc_text.delete(1.0, tk.END)
-                self.ai_desc_text.insert(tk.END, ai_message)
-            except Exception as e:
-                self.ai_desc_text.delete(1.0, tk.END)
-                self.ai_desc_text.insert(tk.END, f"Error: Failed to get response from {model}. {str(e)}")
+        try:
+            response = ollama.chat(model=model, messages=[
+                {
+                    'role': 'user',
+                    'content': prompt,
+                },
+            ])
+
+            ai_message = response['message']['content']
+            self.ai_desc_text.delete(1.0, tk.END)
+            self.ai_desc_text.insert(tk.END, ai_message)
+        except Exception as e:
+            self.ai_desc_text.delete(1.0, tk.END)
+            self.ai_desc_text.insert(tk.END, f"Error: Failed to get response from {model}. {str(e)}")
 
     def on_enter_pressed(self, event):
         self.send_message()
